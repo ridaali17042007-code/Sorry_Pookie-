@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgive me? 🥺</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff0f3;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden; /* Stops the screen from shaking */
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        img {
+            height: 200px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        #yesBtn {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #f44336;
+            color: white;
+            position: relative; /* Essential for the moving effect */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img id="mainGif" src="https://media.giphy.com/media/7SF5scGB2AFrO/giphy.gif" alt="Sad Duck">
+        <h1 id="header">Sorry... Forgive me? 🥺</h1>
+
+        <div class="buttons" id="btnGroup">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const mainGif = document.getElementById('mainGif');
+        const header = document.getElementById('header');
+
+        const phrases = [
+            "No", "Pookie Sorry...", "Please????", 
+            "If you don't I'll be Very sad..", "REALLY SAD.... 🥺", 
+            "Don't do this to me 👉👈", "Last Chance....?"
+        ];
+
+        let clickCount = 0;
+
+        noBtn.addEventListener('click', () => {
+            clickCount++;
+            
+            // 1. Change Button Text
+            if (clickCount < phrases.length) {
+                noBtn.innerText = phrases[clickCount];
+            }
+
+            // 2. Grow Yes Button (Capped at 3x size so it stays attractive)
+            const growth = Math.min(1 + (clickCount * 0.4), 3);
+            yesBtn.style.transform = `scale(${growth})`;
+
+            // 3. Dodge Cursor (only on the last chance)
+            if (clickCount >= phrases.length - 1) {
+                noBtn.style.position = 'absolute';
+                moveButton();
+                noBtn.addEventListener('mouseover', moveButton);
+            }
+        });
+
+        function moveButton() {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        yesBtn.addEventListener('click', () => {
+            header.innerText = "Yay! You're the best! ❤️";
+            document.getElementById('btnGroup').style.display = 'none';
+            mainGif.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnJueHlsYmpxYnJueHlsYmpxYnJueHlsYmpxYnJueHlsYmpxJmN0PWc/l0HlIDasUOg80S76M/giphy.gif";
+        });
+    </script>
+</body>
+</html>
