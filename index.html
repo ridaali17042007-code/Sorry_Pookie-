@@ -9,138 +9,161 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
-            background-color: #d8aab9; /* Soft Pink */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            padding-top: 5vh; 
+            background-color: #fce4ec;
+            font-family: 'Segoe UI', sans-serif;
             text-align: center;
+            overflow: hidden; /* Prevents scrollbars if button tries to leave */
         }
 
-        #container {
-            padding: 20px;
+        #content-layer {
+            z-index: 100;
+            margin-bottom: 20px;
         }
 
         img {
-            height: 200px;
-            margin-bottom: 20px;
-            border-radius: 15px;
+            height: 180px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(216, 27, 96, 0.2);
         }
 
         h1 {
             color: #d81b60;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin: 10px 0;
         }
 
-        .buttons {
+        #sub-text {
+            color: #ad1457;
+            font-size: 1.3rem;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .btn-wrapper {
             display: flex;
-            gap: 20px;
-            justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            height: 300px;
+            position: relative;
         }
 
         button {
-            padding: 15px 25px;
-            font-size: 1.2rem;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease-out;
+            white-space: nowrap;
         }
 
         #yesBtn {
             background-color: #4caf50;
             color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            z-index: 1;
         }
 
         #noBtn {
             background-color: #f44336;
             color: white;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
             position: relative;
-        }
-
-        .success-msg {
-            display: none;
+            z-index: 101;
         }
     </style>
 </head>
 <body>
 
-    <div id="container">
+    <div id="content-layer">
         <img id="mainGif" src="https://i.pinimg.com/originals/17/3a/12/173a12d6975d4fac4f79702157086485.gif" alt="Cute GIF">
-        
         <h1 id="question">Sorry... Forgive me? 🥺</h1>
+        <div id="sub-text">Yayy! You made me Happy</div>
+    </div>
 
-        <div class="buttons" id="buttonGroup">
-            <button id="yesBtn">Yes</button>
-            <button id="noBtn">No</button>
-        </div>
+    <div class="btn-wrapper" id="buttonGroup">
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
     </div>
 
     <script>
-        const phrases = [
-            "No",
-            "Pookie Sorry...",
-            "Please????",
-            "If you don't I'll be Very sad..",
-            "REALLY SAD.... 🥺",
-            "Don't do this to me 👉👈",
-            "Last Chance....?"
-        ];
-
-        // Replace these with links to different GIFs for each stage
+        const phrases = ["No", "Pookie Sorry...", "Please????", "If you don't I'll be Very sad..", "REALLY SAD.... 🥺", "Don't do this to me 👉👈", "Last Chance....?"];
         const gifs = [
-            "https://i.pinimg.com/originals/d7/f5/87/d7f587da442a54025daf47091fe26ba0.gif", // initial
-            "https://i.pinimg.com/originals/61/47/2b/61472b8ee65a7fc3ea0e98688e32760c.gif", // sad
-            "https://i.pinimg.com/originals/61/47/2b/61472b8ee65a7fc3ea0e98688e32760c.gif", // sadder
-            "https://i.pinimg.com/originals/17/4d/32/174d32886f2226e9bb871b060cd2d188.gif", // crying
-            "https://i.pinimg.com/originals/6e/23/ed/6e23edc5545bac7de126e915e367a3a7.gif"  // desperate
+            "https://i.pinimg.com/originals/d7/f5/87/d7f587da442a54025daf47091fe26ba0.gif",
+            "https://i.pinimg.com/originals/61/47/2b/61472b8ee65a7fc3ea0e98688e32760c.gif",
+            "https://i.pinimg.com/originals/61/47/2b/61472b8ee65a7fc3ea0e98688e32760c.gif",
+            "https://i.pinimg.com/originals/17/4d/32/174d32886f2226e9bb871b060cd2d188.gif",
+            "https://i.pinimg.com/originals/6e/23/ed/6e23edc5545bac7de126e915e367a3a7.gif"
         ];
 
         let noCount = 0;
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const mainGif = document.getElementById('mainGif');
-        const question = document.getElementById('question');
+        const questionText = document.getElementById('question');
+        const subText = document.getElementById('sub-text');
 
         noBtn.addEventListener('click', () => {
             noCount++;
             
-            // 1. Change text on No button
             if (noCount < phrases.length) {
                 noBtn.innerText = phrases[noCount];
             }
 
-            // 2. Make Yes button bigger
-            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            yesBtn.style.fontSize = (currentSize * 1.5) + 'px';
-            yesBtn.style.padding = (currentSize * 1.2) + 'px';
+            // YES GROWTH: Capped so it doesn't eat the screen
+            const yesScale = Math.min(1 + (noCount * 0.5), 3.2);
+            yesBtn.style.transform = `scale(${yesScale})`;
 
-            // 3. Change GIF
+            // PUSH NO: Only pushes until it hits the near-edge of the container
+            const pushLimit = window.innerWidth / 3;
+            const currentPush = Math.min(noCount * 40, pushLimit);
+            if (noCount < phrases.length - 1) {
+                noBtn.style.transform = `translateX(${currentPush}px)`;
+            }
+
             if (noCount < gifs.length) {
                 mainGif.src = gifs[noCount];
             }
 
-            // 4. THE DODGE (on the last chance)
+            // DODGING GAME LOGIC
             if (noCount >= phrases.length - 1) {
-                noBtn.style.position = 'absolute';
+                noBtn.style.position = 'fixed'; // Fixed keeps it relative to window
+                noBtn.style.zIndex = '9999';
                 moveButton();
                 noBtn.addEventListener('mouseover', moveButton);
             }
         });
 
         function moveButton() {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // Strict screen boundaries
+            const maxX = window.innerWidth - btnWidth - 50;
+            const maxY = window.innerHeight - btnHeight - 50;
+
+            // Ensure it doesn't go below 50px (safety margin)
+            const randomX = Math.max(50, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(50, Math.floor(Math.random() * maxY));
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
         }
 
         yesBtn.addEventListener('click', () => {
             document.getElementById('buttonGroup').style.display = 'none';
-            question.innerText = "Yay! Besties again! ❤️";
-            mainGif.src = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueG56Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3ImZXA9djFfaW50ZXJuYWxfZ2lmX2J5X2lkJmN0PWc/MDJ9IbxxvDUQM/giphy.gif"; // Happy GIF
+            questionText.innerText = "I knew you can't stay angry from me";
+            mainGif.src = "https://www.gifcen.com/wp-content/uploads/2021/02/love-gif-3.gif"; 
+            subText.style.display = "block";
         });
     </script>
 </body>
